@@ -11,7 +11,7 @@
 
 
 <script>
-    $(document).ready(await function() {
+    $(document).ready( function() {
         //$('#AlmsData').hide();
         //$('#PerculusData').hide();
         //$('#CustomersData').hide();
@@ -56,57 +56,81 @@
 
 
         // Datatable;
-        const dataAlms = AlmsDatasi();
 
-        console.log(dataAlms);
+        $("#AlmsData").dxDataGrid({
+            dataSource: {
+                load: async function GetDataForDxDataGrid() {
+                    var ListPromise = new Promise((Resolve) => {
+                        $.ajax({
+                            type: "POST",
+                            url: "/WebService.asmx/Alms",
+                            data: JSON.stringify({}),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+                        });
+                    });
+                    return ListPromise;
+                }
+            },
+            paging: { pageSize: 25 },
+            pager: {
+                showPageSizeSelector: true,
+                allowedPageSizes: [10, 25, 50, 100],
+                showInfo: true
+            },
+            remoteOperations: false,
+            rowAlternationEnabled: true, //Satırların Renklendirilmesini Sağlıyor
+            searchPanel: {
+                visible: true,
+                highlightCaseSensitive: true,
+                placeholder: 'Ara...',
+            },
+            groupPanel: { visible: true },
+            grouping: {
+                autoExpandAll: false, //Sayfa Açılışınca Gruplar Kapalı Şekilde Gelecek.
+                contextMenuEnabled: true
+            },
+            showBorders: true,
+            showRowLines: true,
+            //Kolonların Yeniden Boyutlandırılabilir mi ?
+            allowColumnReordering: true,
+            allowColumnResizing: true,
+            filterRow: { visible: true }, //Satırlara Filtre Eklenebilir mi ?
+            /*Kolon Gizlenebilir mi ?*/
+            columnChooser: {
+                enabled: true,
+                allowSearch: true
+            },
+            columnAutoWidth: false,
+            selection: { mode: "multiple" },
+            sorting: { mode: "multiple" },
+            scrolling: { useNative: true },
+            stateStoring: {
+                enabled: true, //Kullanıcıya Özel Grid Dizayn Yapılıp Yapılamayacağının Bilgisidir.
+                type: "custom",
+                savingTimeout: 0
+            },
+            headerFilter: { visible: true },
+            export: {
+                enabled: true
+            },
 
-        const dataGrid = $('#AlmsData').dxDataGrid({
-        dataSource: dataAlms,
-        keyExpr: 'Alms_OrganizationID',
-        columnsAutoWidth: true,
-        showBorders: true,
-        filterRow: {
-            visible: true,
-            applyFilter: 'auto',
-        },
-        searchPanel: {
-            visible: true,
-            width: 240,
-            placeholder: 'Ara...',
-        },
-        export: {
-            enabled: true,
-        },
-        columnChooser: {
-            enabled: true,
-        },
-        headerFilter: {
-            visible: true,
-        },
         columns: [
             {
-                dataField: 'Alms_OrganizationID',
-                caption: 'Organizasyon ID',
-                width: 140,
-                headerFilter: {
-                    groupInterval: 10000,
-                }
+                dataField: "Alms_OrganizationID",
+                caption: "Organizasyon ID",
+                dataType: "string"
             },
             {
-                dataField: 'Alms_OrganizationName',
-                caption: 'Kurum Adı',
-                width: 140,
-                headerFilter: {
-                    groupInterval: 10000,
-                }
+                dataField: "Alms_OrganizationName",
+                caption: "Kurum Adı",
+                dataType: "string"
             },
             {
-                dataField: 'ALMS_Database',
-                caption: '',
-                width: 140,
-                headerFilter: {
-                    groupInterval: 10000,
-                }
+                dataField: "ALMS_Database",
+                caption: "Data Base",
+                dataType: "string"
             }
         ],
     }).dxDataGrid('instance');
@@ -141,9 +165,8 @@
         </div>
     </div>
     <div class="row mt-4">
-        @*<div id="AlmsData" class="col-12 my-1 bg-danger"></div>*@
-        <div class="demo-container col-12 my-1 border border-secondary p-2"><div id="AlmsData"></div></div>
-        <div id="PerculusData" class="col-12 my-1 bg-danger">PerculusData</div>
-        <div id="CustomersData" class="col-12 my-1 bg-danger">CustomersData</div>
+        <div class="demo-container col-12 my-1 border border-2 border-primary p-2 rounded-3"><div id="AlmsData"></div></div>
+        <div class="demo-container col-12 my-1 border border-2 border-info p-2 rounded-3"><div id="PerculusData"></div>PerculusData</div>
+        <div class="demo-container col-12 my-1 border border-2 border-success p-2 rounded-3"><div id="CustomersData"></div>CustomersData</div>
     </div>
 </div>

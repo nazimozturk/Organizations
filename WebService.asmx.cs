@@ -25,10 +25,31 @@ namespace Organizations
         public object Alms()
         {
             DataTable dataList = new DataTable();
-            using (SqlConnection connection = new SqlConnection("Server = .; Database = Advancity; Trusted_Connection = True"))
+            using (SqlConnection connection = new SqlConnection("Server =.; Database = Advancity; Trusted_Connection = True"))
             {
                 DataTable Dt = new DataTable();
                 using (SqlCommand Cmd = new SqlCommand("SELECT Alms_OrganizationID,Alms_OrganizationName,ALMS_Database FROM ALMS", connection))
+                {
+                    Cmd.CommandTimeout = 0;
+                    connection.Open();
+                    using (SqlDataReader Sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection)) { Dt.Load(Sdr); Sdr.Close(); }
+                }
+                dataList.Merge(Dt);
+            };
+            object JSON = new { data = JsonConvert.SerializeObject(dataList) };
+
+            return JSON;
+        }
+
+
+        [WebMethod]
+        public object Perculus()
+        {
+            DataTable dataList = new DataTable();
+            using (SqlConnection connection = new SqlConnection("Server =.; Database = Advancity; Trusted_Connection = True"))
+            {
+                DataTable Dt = new DataTable();
+                using (SqlCommand Cmd = new SqlCommand("SELECT *FROM PERCULUS", connection))
                 {
                     Cmd.CommandTimeout = 0;
                     connection.Open();
