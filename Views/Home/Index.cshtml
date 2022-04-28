@@ -1,0 +1,178 @@
+﻿@{
+    ViewBag.Title = "Kurumlar";
+}
+<div class="card text-white bg-secondary mb-3 w-100 mt-2">
+    <div class="card-header"><h1>Kurumlar | Nazım ÖZTÜRK</h1></div>
+    <div class="card-body">
+        <h5 class="card-title">Nazım ÖZTÜRK</h5>
+        <p class="card-text">Kurum arama sayfasıdır.</p>
+    </div>
+</div>
+
+
+<script>
+    var newValue = null;
+    const valueChangedHandler1 = async function (e) {
+        const previousValue = e.previousValue;
+        newValue = e.value;
+        console.log(newValue)
+    };
+
+    $(document).ready(function () {
+        //$('#AlmsData').hide();
+        //$('#PerculusData').hide();
+        //$('#CustomersData').hide();
+
+        const products = [
+            { ID: 1, Name: 'Alms' },
+            { ID: 2, Name: 'Perculus' }
+        ];
+
+        const orgData = [
+            { ID: 1, Name: 'Sakarya' },
+            { ID: 2, Name: 'Karasu' }
+        ];
+
+        const Urunler = $('#Products').dxSelectBox({
+            dataSource: products,
+            showClearButton: true,
+            displayExpr: 'Name',
+            valueExpr: 'ID',
+            placeholder: 'Ürün Arama',
+            searchEnabled: true,
+        }).dxSelectBox('instance');
+
+        //const Kurumlar = $('#Organization').dxSelectBox({
+        //dataSource: orgData,
+        //showClearButton: true,
+        //displayExpr: 'Name',
+        //valueExpr: 'ID',
+        //placeholder: 'Kurum Arama',
+        //searchEnabled: true,
+        //}).dxSelectBox('instance');
+
+
+
+        const Kurumlar = $('#Organization').dxSelectBox({
+            dataSource: orgData,
+            showClearButton: true,
+            displayExpr: 'Name',
+            valueExpr: 'ID',
+            placeholder: 'Kurum Arama',
+            searchEnabled: true,
+        }).dxSelectBox('instance').on("valueChanged", valueChangedHandler1);
+
+        $('#success-contained').dxButton({
+            stylingMode: 'contained',
+            text: 'Sync YAP',
+            type: 'success',
+            width: '98%',
+            onClick() {
+                DevExpress.ui.notify('Sync İşlemi Başarılı Bir Şekilde Sonuçlandı');
+            }
+        });
+
+        const employees2 = [{
+            ID: 1,
+            OrderNumber: 35703,
+            OrderDate: '2017/04/10',
+            DeliveryDate: '2017/04/13 9:00',
+            SaleAmount: 11800,
+            Terms: '15 Days',
+            CustomerStoreCity: 'Los Angeles, CA',
+            Employee: 'Harv Mudd',
+        }, {
+            ID: 4,
+            OrderNumber: 35711,
+            OrderDate: '2017/01/12',
+            DeliveryDate: '2017/01/13 9:00',
+            SaleAmount: 16050,
+            Terms: '15 Days',
+            CustomerStoreCity: 'San Jose, CA',
+            Employee: 'Jim Packard',
+        }, {
+            ID: 5,
+            OrderNumber: 35714,
+            OrderDate: '2017/01/22',
+            DeliveryDate: '2017/01/27 9:00',
+            SaleAmount: 14750,
+            Terms: '15 Days',
+            CustomerStoreCity: 'Las Vegas, NV',
+            Employee: 'Harv Mudd',
+        }];
+        const dataGrid = $('#AlmsData').dxDataGrid({
+        dataSource: employees2,
+        keyExpr: 'ID',
+        columnsAutoWidth: true,
+        showBorders: true,
+        filterRow: {
+            visible: true,
+            applyFilter: 'auto',
+        },
+        searchPanel: {
+            visible: true,
+            width: 240,
+            placeholder: 'Ara...',
+        },
+        export: {
+            enabled: true,
+        },
+        columnChooser: {
+            enabled: true,
+        },
+        headerFilter: {
+            visible: true,
+        },
+        columns: [{
+            dataField: 'OrderNumber',
+            caption: 'Invoice Number',
+            width: 140,
+            headerFilter: {
+                groupInterval: 10000,
+            },
+        },
+        {
+            dataField: 'DeliveryDate',
+            alignment: 'right',
+            dataType: 'datetime',
+            width: 180,
+            format: 'M/d/yyyy, HH:mm',
+        }, {
+            dataField: 'SaleAmount',
+            alignment: 'right',
+            format: 'currency',
+            editorOptions: {
+                format: 'currency',
+                showClearButton: true,
+            },
+        }, 'Employee', {
+            caption: 'City',
+            dataField: 'CustomerStoreCity',
+            headerFilter: {
+                allowSearch: true,
+            },
+        }],
+    }).dxDataGrid('instance');
+            
+ });
+</script>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-5">
+            <div id="Products"></div>
+        </div>
+        <div class="col-5">
+            <div id="Organization"></div>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-success w-100" type="button" id="success-contained">SYNC YAP</button>
+        </div>
+    </div>
+    <div class="row mt-4">
+        @*<div id="AlmsData" class="col-12 my-1 bg-danger"></div>*@
+        <div class="demo-container col-12 my-1 border border-secondary p-2"><div id="AlmsData"></div></div>
+        <div id="PerculusData" class="col-12 my-1 bg-danger">PerculusData</div>
+        <div id="CustomersData" class="col-12 my-1 bg-danger">CustomersData</div>
+    </div>
+</div>
