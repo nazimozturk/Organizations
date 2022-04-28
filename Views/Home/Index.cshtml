@@ -1,14 +1,6 @@
 ﻿@{
     ViewBag.Title = "Kurumlar";
 }
-<div class="card text-white bg-secondary mb-3 w-100 mt-2">
-    <div class="card-header"><h1>Kurumlar | Nazım ÖZTÜRK</h1></div>
-    <div class="card-body">
-        <h5 class="card-title">Nazım ÖZTÜRK</h5>
-        <p class="card-text">Kurum arama sayfasıdır.</p>
-    </div>
-</div>
-
 
 <script>
     $(document).ready(function () {
@@ -102,7 +94,7 @@
                 highlightCaseSensitive: true,
                 placeholder: 'Ara...',
             },
-            groupPanel: { visible: true, emptyPanelText:'ALMS Verileri'},
+            groupPanel: { visible: true, emptyPanelText: 'ALMS Verileri' },
             grouping: {
                 autoExpandAll: false, //Sayfa Açılışınca Gruplar Kapalı Şekilde Gelecek.
                 contextMenuEnabled: true
@@ -197,7 +189,7 @@
                 highlightCaseSensitive: true,
                 placeholder: 'Ara...',
             },
-            groupPanel: { visible: true, emptyPanelText: 'Perculus Verileri'},
+            groupPanel: { visible: true, emptyPanelText: 'Perculus Verileri' },
             grouping: {
                 autoExpandAll: false, //Sayfa Açılışınca Gruplar Kapalı Şekilde Gelecek.
                 contextMenuEnabled: true
@@ -292,7 +284,7 @@
                 highlightCaseSensitive: true,
                 placeholder: 'Ara...',
             },
-            groupPanel: { visible: true, emptyPanelText: 'Kişi Verileri'},
+            groupPanel: { visible: true, emptyPanelText: 'Kişi Verileri' },
             grouping: {
                 autoExpandAll: false, //Sayfa Açılışınca Gruplar Kapalı Şekilde Gelecek.
                 contextMenuEnabled: true
@@ -337,6 +329,19 @@
         }).dxDataGrid('instance');
     });
 </script>
+
+
+<div class="card text-white bg-secondary mb-3 w-100 mt-2">
+    <div class="card-header d-flex justify-content-end"><h1>Kurumlar | Nazım ÖZTÜRK</h1></div>
+    <div class="card-body d-flex justify-content-between">
+        <div>
+            <h5 class="card-title">Kurum arama sayfasıdır.</h5>
+            <p class="card-text">Nazım ÖZTÜRK</p>
+        </div>
+        <img style="width: 64px" src="~/imgs/favo.png"/>
+    </div>
+</div>
+
 
 <div class="container mt-4">
     <div class="row">
