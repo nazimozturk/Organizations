@@ -11,14 +11,7 @@
 
 
 <script>
-    var newValue = null;
-    const valueChangedHandler1 = async function (e) {
-        const previousValue = e.previousValue;
-        newValue = e.value;
-        console.log(newValue)
-    };
-
-    $(document).ready(function () {
+    $(document).ready(await function() {
         //$('#AlmsData').hide();
         //$('#PerculusData').hide();
         //$('#CustomersData').hide();
@@ -42,25 +35,14 @@
             searchEnabled: true,
         }).dxSelectBox('instance');
 
-        //const Kurumlar = $('#Organization').dxSelectBox({
-        //dataSource: orgData,
-        //showClearButton: true,
-        //displayExpr: 'Name',
-        //valueExpr: 'ID',
-        //placeholder: 'Kurum Arama',
-        //searchEnabled: true,
-        //}).dxSelectBox('instance');
-
-
-
         const Kurumlar = $('#Organization').dxSelectBox({
-            dataSource: orgData,
-            showClearButton: true,
-            displayExpr: 'Name',
-            valueExpr: 'ID',
-            placeholder: 'Kurum Arama',
-            searchEnabled: true,
-        }).dxSelectBox('instance').on("valueChanged", valueChangedHandler1);
+        dataSource: orgData,
+        showClearButton: true,
+        displayExpr: 'Name',
+        valueExpr: 'ID',
+        placeholder: 'Kurum Arama',
+        searchEnabled: true,
+        }).dxSelectBox('instance');
 
         $('#success-contained').dxButton({
             stylingMode: 'contained',
@@ -72,37 +54,15 @@
             }
         });
 
-        const employees2 = [{
-            ID: 1,
-            OrderNumber: 35703,
-            OrderDate: '2017/04/10',
-            DeliveryDate: '2017/04/13 9:00',
-            SaleAmount: 11800,
-            Terms: '15 Days',
-            CustomerStoreCity: 'Los Angeles, CA',
-            Employee: 'Harv Mudd',
-        }, {
-            ID: 4,
-            OrderNumber: 35711,
-            OrderDate: '2017/01/12',
-            DeliveryDate: '2017/01/13 9:00',
-            SaleAmount: 16050,
-            Terms: '15 Days',
-            CustomerStoreCity: 'San Jose, CA',
-            Employee: 'Jim Packard',
-        }, {
-            ID: 5,
-            OrderNumber: 35714,
-            OrderDate: '2017/01/22',
-            DeliveryDate: '2017/01/27 9:00',
-            SaleAmount: 14750,
-            Terms: '15 Days',
-            CustomerStoreCity: 'Las Vegas, NV',
-            Employee: 'Harv Mudd',
-        }];
+
+        // Datatable;
+        const dataAlms = AlmsDatasi();
+
+        console.log(dataAlms);
+
         const dataGrid = $('#AlmsData').dxDataGrid({
-        dataSource: employees2,
-        keyExpr: 'ID',
+        dataSource: dataAlms,
+        keyExpr: 'Alms_OrganizationID',
         columnsAutoWidth: true,
         showBorders: true,
         filterRow: {
@@ -123,37 +83,48 @@
         headerFilter: {
             visible: true,
         },
-        columns: [{
-            dataField: 'OrderNumber',
-            caption: 'Invoice Number',
-            width: 140,
-            headerFilter: {
-                groupInterval: 10000,
+        columns: [
+            {
+                dataField: 'Alms_OrganizationID',
+                caption: 'Organizasyon ID',
+                width: 140,
+                headerFilter: {
+                    groupInterval: 10000,
+                }
             },
-        },
-        {
-            dataField: 'DeliveryDate',
-            alignment: 'right',
-            dataType: 'datetime',
-            width: 180,
-            format: 'M/d/yyyy, HH:mm',
-        }, {
-            dataField: 'SaleAmount',
-            alignment: 'right',
-            format: 'currency',
-            editorOptions: {
-                format: 'currency',
-                showClearButton: true,
+            {
+                dataField: 'Alms_OrganizationName',
+                caption: 'Kurum Adı',
+                width: 140,
+                headerFilter: {
+                    groupInterval: 10000,
+                }
             },
-        }, 'Employee', {
-            caption: 'City',
-            dataField: 'CustomerStoreCity',
-            headerFilter: {
-                allowSearch: true,
-            },
-        }],
+            {
+                dataField: 'ALMS_Database',
+                caption: '',
+                width: 140,
+                headerFilter: {
+                    groupInterval: 10000,
+                }
+            }
+        ],
     }).dxDataGrid('instance');
-            
+
+     async function AlmsDatasi() {
+        var AtamaPromise = new Promise((Resolve) => {
+            $.ajax({
+                type: "POST",
+                url: "/WebService.asmx/Alms",
+                data: JSON.stringify({}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+            });
+        });
+
+     return AtamaPromise;
+    }
  });
 </script>
 

@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using System.Web.UI.WebControls;
 
 namespace Organizations
 {
@@ -19,15 +22,23 @@ namespace Organizations
     {
 
         [WebMethod]
-        public string Alms()
+        public object Alms()
         {
-            using (SqlConnection connection = new SqlConnection("Server = .; Database = Alms; Trusted_Connectin = True"))
+            DataTable dataList = new DataTable();
+            using (SqlConnection connection = new SqlConnection("Server = .; Database = Advancity; Trusted_Connection = True"))
             {
-                connection.Open();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ALMS FOR JSON AUTO");
-                connection.Close();
+                DataTable Dt = new DataTable();
+                using (SqlCommand Cmd = new SqlCommand("SELECT Alms_OrganizationID,Alms_OrganizationName,ALMS_Database FROM ALMS", connection))
+                {
+                    Cmd.CommandTimeout = 0;
+                    connection.Open();
+                    using (SqlDataReader Sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection)) { Dt.Load(Sdr); Sdr.Close(); }
+                }
+                dataList.Merge(Dt);
             };
-            return "a";
+            object JSON = new { data = JsonConvert.SerializeObject(dataList) };
+
+            return JSON;
         }
     }
 }
