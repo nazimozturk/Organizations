@@ -83,19 +83,19 @@ namespace Organizations
         }
 
         [WebMethod]
-        public object KurumAra(int ID)
+        public object KurumAra()
         {
             DataTable dataList = new DataTable();
             using (SqlConnection connection = new SqlConnection("Server =.; Database = Advancity; Trusted_Connection = True"))
             {
                 DataTable Dt = new DataTable();
-                using (SqlCommand Cmd = new SqlCommand(@"SELECT Alms_OrganizationID AS 'ID',Alms_OrganizationName AS 'KurumAdi'FROM Alms
-                                                        UNION ALL
-                                                        SELECT Perculus_Orgid AS 'ID',Organizasyon_adi AS 'KurumAdi' FROM Perculus
-                                                        UNION ALL
-                                                        SELECT Kisi_orgid AS 'ID',Kurum_adi AS 'KurumAdi' FROM Customers
-                                                        ORDER BY KurumAdi ASC", connection))
-                {
+                using (SqlCommand Cmd = new SqlCommand(@"SELECT '1000' + CAST(id AS VARCHAR) + '|' + CAST(Alms_OrganizationID AS VARCHAR) AS ID, Alms_OrganizationName AS 'KurumAdi'FROM Alms
+UNION ALL
+SELECT '2000' + CAST(id AS VARCHAR) + '|' + CAST(Perculus_Orgid AS VARCHAR) AS ID, Organizasyon_adi AS 'KurumAdi' FROM Perculus
+UNION ALL
+SELECT '3000' + CAST(id AS VARCHAR) + '|' + CAST(Kisi_orgid AS VARCHAR) AS ID, Kurum_adi AS 'KurumAdi' FROM  Customers
+ORDER BY KurumAdi ASC", connection)) 
+                                    {
                     Cmd.CommandTimeout = 0;
                     connection.Open();
                     using (SqlDataReader Sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection)) { Dt.Load(Sdr); Sdr.Close(); }
