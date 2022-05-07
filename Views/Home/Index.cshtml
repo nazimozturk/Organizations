@@ -28,13 +28,13 @@
                     console.log(Data);
                     if (Data.value !== null) {
                         if (Data.value == 1) {
-                            $('#AlmsDiv').show();
                             AlmsDatasi();
+                            $('#AlmsDiv').show();
                             $('#PerculusDiv').hide();
                         }
                         else if (Data.value == 2) {
-                            $('#PerculusDiv').show();
                             PerculusDatasi();
+                            $('#PerculusDiv').show();
                             $('#AlmsDiv').hide();
                         }
                         KurumPasif();
@@ -61,7 +61,7 @@
                 onValueChanged(Data) {
                     /*ID=data.value*/
                     if (Data["value"] !== null) {
-                        var OrganizationID = Data["value"].split("|")[1];
+                        var OrganizationID = Data["value"].split("|")[1];                      
                         UrunPasif();
                     }
                     else {
