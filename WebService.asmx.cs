@@ -41,7 +41,6 @@ namespace Organizations
             return JSON;
         }
 
-
         [WebMethod]
         public object Perculus()
         {
@@ -90,12 +89,32 @@ namespace Organizations
             {
                 DataTable Dt = new DataTable();
                 using (SqlCommand Cmd = new SqlCommand(@"SELECT '1000' + CAST(id AS VARCHAR) + '|' + CAST(Alms_OrganizationID AS VARCHAR) AS ID, Alms_OrganizationName AS 'KurumAdi'FROM Alms
-UNION ALL
-SELECT '2000' + CAST(id AS VARCHAR) + '|' + CAST(Perculus_Orgid AS VARCHAR) AS ID, Organizasyon_adi AS 'KurumAdi' FROM Perculus
-UNION ALL
-SELECT '3000' + CAST(id AS VARCHAR) + '|' + CAST(Kisi_orgid AS VARCHAR) AS ID, Kurum_adi AS 'KurumAdi' FROM  Customers
-ORDER BY KurumAdi ASC", connection)) 
+                    UNION ALL
+                    SELECT '2000' + CAST(id AS VARCHAR) + '|' + CAST(Perculus_Orgid AS VARCHAR) AS ID, Organizasyon_adi AS 'KurumAdi' FROM Perculus
+                    UNION ALL
+                    SELECT '3000' + CAST(id AS VARCHAR) + '|' + CAST(Kisi_orgid AS VARCHAR) AS ID, Kurum_adi AS 'KurumAdi' FROM  Customers
+                    ORDER BY KurumAdi ASC", connection)) 
                                     {
+                    Cmd.CommandTimeout = 0;
+                    connection.Open();
+                    using (SqlDataReader Sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection)) { Dt.Load(Sdr); Sdr.Close(); }
+                }
+                dataList.Merge(Dt);
+            };
+            object JSON = new { data = JsonConvert.SerializeObject(dataList) };
+
+            return JSON;
+        }
+
+        [WebMethod]
+        public object AlmsKurumAra(int KurumID)
+        {
+            DataTable dataList = new DataTable();
+            using (SqlConnection connection = new SqlConnection("Server =.; Database = Advancity; Trusted_Connection = True"))
+            {
+                DataTable Dt = new DataTable();
+                using (SqlCommand Cmd = new SqlCommand("SELECT * FROM Alms WHERE Alms_OrganizationID =" + KurumID, connection))
+                {
                     Cmd.CommandTimeout = 0;
                     connection.Open();
                     using (SqlDataReader Sdr = Cmd.ExecuteReader(CommandBehavior.CloseConnection)) { Dt.Load(Sdr); Sdr.Close(); }

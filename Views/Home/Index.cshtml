@@ -10,6 +10,7 @@
             $('#PerculusDiv').hide();
             $('#CustomerDiv').hide();
 
+
             // Ürün Arama
             const products = [
                 { ID: 1, Name: 'Alms' },
@@ -24,7 +25,12 @@
                 searchEnabled: true,
                 onValueChanged(Data) {
                     /*ID=data.value*/
-                    console.log(Data)
+                    if (Data["value"] !== null) {
+                        KurumPasif();
+                    }
+                    else {
+                        KurumAktif();
+                    }
                 }
             });
 
@@ -43,10 +49,63 @@
                     /*ID=data.value*/
                     if (Data["value"] !== null) {
                         var OrganizationID = Data["value"].split("|")[1];
-                        console.log(OrganizationID);
+                        UrunPasif();
+                    }
+                    else {
+                        UrunAktif();
                     }
                 }
             });
+            async function UrunPasif() {
+                if ($('#Organization').select !== null) {
+                    $('#Products').dxSelectBox({ disabled: true });
+                }
+            }
+            async function UrunAktif() {
+                if ($('#Organization').select !== null) {
+                    $('#Products').dxSelectBox({ disabled: false });
+                }
+            }
+            async function KurumPasif() {
+                if ($('#Products').select !== null) {
+                    $('#Organization').dxSelectBox({ disabled: true });
+                }
+            }
+            async function KurumAktif() {
+                if ($('#Products').select !== null) {
+                    $('#Organization').dxSelectBox({ disabled: false });
+                }
+            }
+
+            async function AlmsDatasi() {
+                var AtamaPromise = new Promise((Resolve) => {
+                    $.ajax({
+                        type: "POST",
+                        url: "/WebService.asmx/Alms",
+                        data: JSON.stringify({Kurum}),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+                    });
+                });
+
+                return AtamaPromise;
+            }
+
+            function KurumListesi() {
+                var ListPromise = new Promise((Resolve) => {
+                    $.ajax({
+                        type: "POST",
+                        url: "/WebService.asmx/KurumAra",
+                        data: "{}",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+                    });
+                });
+                return ListPromise;
+            }
+
 
             //Sync Butonu
             $('#success-contained').dxButton({
@@ -60,7 +119,7 @@
             });
 
             //ALMS Litesi
-            async function AlmsDatasi() {
+            function AlmsDatasi() {
                 var AtamaPromise = new Promise((Resolve) => {
                     $.ajax({
                         type: "POST",
@@ -167,21 +226,6 @@
 
                 return AtamaPromise;
             }
-
-            function KurumListesi() {
-                var ListPromise = new Promise((Resolve) => {
-                    $.ajax({
-                        type: "POST",
-                        url: "/WebService.asmx/KurumAra",
-                        data: "{}",
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
-                    });
-                });
-                return ListPromise;
-            }
-
             $("#PerculusData").dxDataGrid({
                 dataSource: {
                     load: async function GetDataForDxDataGrid() {
@@ -261,7 +305,7 @@
             }).dxDataGrid('instance');
 
             //Customer Listesi
-            async function CustomersData() {
+            function CustomersData() {
                 var AtamaPromise = new Promise((Resolve) => {
                     $.ajax({
                         type: "POST",
@@ -367,10 +411,10 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-5">
-            <div id="Products"></div>
+            <div id="Products"  onchange="secici()" ></div>
         </div>
         <div class="col-5">
-            <div id="Organization"></div>
+            <div id="Organization" onchange="secici()"></div>
         </div>
         <div class="col-2">
             <button class="btn btn-success w-100" type="button" id="success-contained">SYNC YAP</button>
