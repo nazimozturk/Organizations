@@ -6,7 +6,7 @@
         LoadInformation();
 
         async function LoadInformation() {
-            //$('#AlmsDiv').hide();
+            $('#AlmsDiv').hide();
             $('#PerculusDiv').hide();
             $('#CustomerDiv').hide();
 
@@ -25,11 +25,24 @@
                 searchEnabled: true,
                 onValueChanged(Data) {
                     /*ID=data.value*/
-                    if (Data["value"] !== null) {
+                    console.log(Data);
+                    if (Data.value !== null) {
+                        if (Data.value == 1) {
+                            $('#AlmsDiv').show();
+                            AlmsDatasi();
+                            $('#PerculusDiv').hide();
+                        }
+                        else if (Data.value == 2) {
+                            $('#PerculusDiv').show();
+                            PerculusDatasi();
+                            $('#AlmsDiv').hide();
+                        }
                         KurumPasif();
                     }
                     else {
                         KurumAktif();
+                        $('#AlmsDiv').hide();
+                        $('#PerculusDiv').hide();
                     }
                 }
             });
@@ -82,7 +95,7 @@
                     $.ajax({
                         type: "POST",
                         url: "/WebService.asmx/Alms",
-                        data: JSON.stringify({Kurum}),
+                        data: JSON.stringify({ Kurum }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
@@ -411,7 +424,7 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-5">
-            <div id="Products"  onchange="secici()" ></div>
+            <div id="Products" onchange="secici()"></div>
         </div>
         <div class="col-5">
             <div id="Organization" onchange="secici()"></div>
