@@ -3,6 +3,7 @@
 }
 <script>
 $(document).ready(function () {
+    var OrganizationID = null;
     LoadInformation();
     async function LoadInformation() {
         $('#AlmsDiv').hide();
@@ -23,23 +24,23 @@ $(document).ready(function () {
             searchEnabled: true,
             onValueChanged(Data) {
                 /*ID=data.value*/
+                OrganizationID = null;
                 if (Data.value !== null) {
                     if (Data.value == 1) {
-                        AlmsDatasi();
-                        $('#AlmsDiv').show();
                         $('#PerculusDiv').hide();
+                        $('#AlmsDiv').show();
+                        $("#AlmsData")["dxDataGrid"]("instance").refresh();
                     }
                     else if (Data.value == 2) {
-                        PerculusDatasi();
-                        $('#PerculusDiv').show();
                         $('#AlmsDiv').hide();
+                        $('#PerculusDiv').show();
+                        $("#PerculusData")["dxDataGrid"]("instance").refresh();
                     }
                     KurumPasif();
                 }
                 else {
+                    $('#PerculusDiv, #AlmsDiv').hide();
                     KurumAktif();
-                    $('#AlmsDiv').hide();
-                    $('#PerculusDiv').hide();
                 }
             }
         });
@@ -58,23 +59,27 @@ $(document).ready(function () {
             onValueChanged(Data) {
                 /*ID=data.value*/
                 if (Data["value"] !== null) {
-                    var OrganizationID = Data["value"].split("|")[1];
+                    OrganizationID = Data["value"].split("|")[1];
 
                     $('#AlmsDiv').show();
                     $('#PerculusDiv').show();
                     $('#CustomerDiv').show();
-                        
                     UrunPasif();
-                    console.log(OrganizationID);
+                    $("#AlmsData")["dxDataGrid"]("instance").refresh();
+                    $("#PerculusData")["dxDataGrid"]("instance").refresh();
+                    $("#CustomersData")["dxDataGrid"]("instance").refresh();
                 }
                 else {
                     UrunAktif();
                     $('#AlmsDiv').hide();
                     $('#PerculusDiv').hide();
                     $('#CustomerDiv').hide();
+
+                    OrganizationID = null;
                 }
             }
         });
+
         async function UrunPasif() {
             if ($('#Organization').select !== null) {
                 $('#Products').dxSelectBox({ disabled: true });
@@ -93,23 +98,10 @@ $(document).ready(function () {
         async function KurumAktif() {
             if ($('#Products').select !== null) {
                 $('#Organization').dxSelectBox({ disabled: false });
+                OrganizationID = null;
             }
         }
 
-        async function AlmsDatasi() {
-            var AtamaPromise = new Promise((Resolve) => {
-                $.ajax({
-                    type: "POST",
-                    url: "/WebService.asmx/Alms",
-                    data: JSON.stringify({ Kurum }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
-                });
-            });
-
-            return AtamaPromise;
-        }
 
         function KurumListesi() {
             var ListPromise = new Promise((Resolve) => {
@@ -151,19 +143,56 @@ $(document).ready(function () {
 
             return AtamaPromise;
         }
+
+        function AlmsKurumAra(OrganizationID) {
+            var AtamaPromise = new Promise((Resolve) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/WebService.asmx/AlmsKurumAra",
+                    data: JSON.stringify({ KurumID: OrganizationID }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+                });
+            });
+
+            return AtamaPromise;
+        }
+
+        function PerculusKurumAra(OrganizationID) {
+            var AtamaPromise = new Promise((Resolve) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/WebService.asmx/PerculusKurumAra",
+                    data: JSON.stringify({ KurumID: OrganizationID }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+                });
+            });
+
+            return AtamaPromise;
+        }
+
+        function CustomersKurumAra(OrganizationID) {
+            var AtamaPromise = new Promise((Resolve) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/WebService.asmx/CustomersKurumAra",
+                    data: JSON.stringify({ KurumID: OrganizationID }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
+                });
+            });
+
+            return AtamaPromise;
+        }
+        // Alms Listesi
         $("#AlmsData").dxDataGrid({
             dataSource: {
                 load: async function GetDataForDxDataGrid() {
-                    var ListPromise = new Promise((Resolve) => {
-                        $.ajax({
-                            type: "POST",
-                            url: "/WebService.asmx/Alms",
-                            data: JSON.stringify({}),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
-                        });
-                    });
+                    var ListPromise = OrganizationID !== null ? await AlmsKurumAra(OrganizationID) : await AlmsDatasi();
                     return ListPromise;
                 }
             },
@@ -247,16 +276,7 @@ $(document).ready(function () {
         $("#PerculusData").dxDataGrid({
             dataSource: {
                 load: async function GetDataForDxDataGrid() {
-                    var ListPromise = new Promise((Resolve) => {
-                        $.ajax({
-                            type: "POST",
-                            url: "/WebService.asmx/Perculus",
-                            data: JSON.stringify({}),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
-                        });
-                    });
+                    var ListPromise = OrganizationID !== null ? await PerculusKurumAra(OrganizationID) : await PerculusDatasi();
                     return ListPromise;
                 }
             },
@@ -323,7 +343,7 @@ $(document).ready(function () {
         }).dxDataGrid('instance');
 
         //Customer Listesi
-        function CustomersData() {
+        function CustomersDatasi() {
             var AtamaPromise = new Promise((Resolve) => {
                 $.ajax({
                     type: "POST",
@@ -340,16 +360,7 @@ $(document).ready(function () {
         $("#CustomersData").dxDataGrid({
             dataSource: {
                 load: async function GetDataForDxDataGrid() {
-                    var ListPromise = new Promise((Resolve) => {
-                        $.ajax({
-                            type: "POST",
-                            url: "/WebService.asmx/Customers",
-                            data: JSON.stringify({}),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (msg) { Resolve(JSON.parse(msg.d.data)); }
-                        });
-                    });
+                    var ListPromise = OrganizationID !== null ? await CustomersKurumAra(OrganizationID) : await CustomersDatasi();
                     return ListPromise;
                 }
             },
